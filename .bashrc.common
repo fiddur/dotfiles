@@ -1,0 +1,78 @@
+# ~/.bashrc.common - Shared settings across all workstations
+# Tracked in dotfiles repo, sourced from ~/.bashrc
+
+export EDITOR="emacs -nw"
+export NODE_OPTIONS="--max-old-space-size=12000"
+
+# NVM
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+
+# pnpm
+export PNPM_HOME="$HOME/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+
+export PATH="$HOME/.local/bin:$PATH"
+
+# Aliases
+alias turbo="pnpm turbo"
+alias dot='git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
+
+# ------------------------------
+# Claude Code helpers
+# ------------------------------
+
+# Resume Claude session with tmux window naming
+cr() {
+    local name="$1"
+    if [ -n "$TMUX" ] && [ -n "$name" ]; then
+        tmux rename-window "$name"
+    fi
+    if [ -n "$name" ]; then
+        claude --resume "$name"
+    else
+        claude --resume
+    fi
+}
+
+# Get Claude sessions index file for current directory
+_claude_sessions_index() {
+    local project_path=$(pwd | sed 's|/|-|g')
+    echo "$HOME/.claude/projects/$project_path/sessions-index.json"
+}
+
+# List Claude session names (scoped to current directory)
+cl() {
+    local index=$(_claude_sessions_index)
+    if [ ! -f "$index" ]; then
+        echo "📋 No Claude sessions in $(pwd)"
+        return
+    fi
+    echo "📋 Claude sessions in $(pwd):"
+    grep -h '"customTitle":' "$index" 2>/dev/null | \
+        sed 's/.*"customTitle": "//; s/",$//' | sort -u
+}
+
+# Tab completion for cr - reads Claude session names (handles spaces, scoped to cwd)
+_cr_completions() {
+    local cur="${COMP_WORDS[*]:1}"
+    cur="${cur%\"}"
+    cur="${cur#\"}"
+
+    local index=$(_claude_sessions_index)
+
+    COMPREPLY=()
+    [ -f "$index" ] || return
+
+    while IFS= read -r session; do
+        if [[ "${session,,}" == "${cur,,}"* ]]; then
+            COMPREPLY+=("\"$session\"")
+        fi
+    done < <(grep -ho '"customTitle": "[^"]*"' "$index" 2>/dev/null | \
+        sed 's/"customTitle": "//g; s/"$//g' | sort -u)
+}
+complete -o nospace -F _cr_completions cr
