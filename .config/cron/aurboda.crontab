@@ -1,0 +1,7 @@
+# Aurboda workstation heartbeat
+# Install with: crontab -l | cat - ~/.config/cron/aurboda.crontab | crontab -
+# Or manually add to crontab -e
+#
+# Requires: ~/.config/aurboda/config with AURBODA_BASE_URL and AURBODA_TOKEN
+
+* * * * * /home/fiddur/.local/bin/workstation-tag.sh
