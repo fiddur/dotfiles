@@ -41,8 +41,16 @@ find_display() {
 # Check if monitor is actually on (not standby/off via DPMS)
 is_monitor_on() {
   local display="$1"
-  # DPMS reports "Monitor is On", "Monitor is Off", "Monitor is Standby", etc.
-  DISPLAY="$display" xset q 2>/dev/null | grep -q "Monitor is On"
+  local xset_output
+  xset_output=$(DISPLAY="$display" xset q 2>/dev/null) || return 0
+
+  # Wayland doesn't have DPMS - assume on since we have a display session
+  if echo "$xset_output" | grep -q "Server does not have the DPMS Extension"; then
+    return 0
+  fi
+
+  # X11 with DPMS - check if monitor is on
+  echo "$xset_output" | grep -q "Monitor is On"
 }
 
 # Check for external monitor (non-laptop panel)
