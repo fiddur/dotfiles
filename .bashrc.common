@@ -22,6 +22,11 @@ export PATH="$HOME/.local/bin:$PATH"
 alias turbo="pnpm turbo"
 alias dot='git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
 
+# Auto-install aurboda crontab if not present
+if [ -f ~/.config/cron/aurboda.crontab ] && ! crontab -l 2>/dev/null | grep -q workstation-tag; then
+  crontab -l 2>/dev/null | cat - ~/.config/cron/aurboda.crontab | crontab - 2>/dev/null
+fi
+
 # ------------------------------
 # Claude Code helpers
 # ------------------------------
