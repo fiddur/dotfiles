@@ -1,0 +1,26 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "permission": {
+    "external_directory": {
+      "~/nc/**": "allow",
+      "/tmp/**": "allow"
+    }
+  },
+  "mcp": {
+    "atlassian": {
+      "type": "remote",
+      "url": "https://mcp.atlassian.com/v1/sse",
+      "enabled": true
+    },
+    "sentry": {
+      "type": "remote",
+      "url": "https://mcp.sentry.dev/mcp",
+      "enabled": true
+    },
+    "nc-mcp": {
+      "type": "local",
+      "command": ["node", "/home/fiddur/nc/NCShared/dist/bin/nc-mcp.js"],
+      "enabled": true
+    }
+  }
+}
