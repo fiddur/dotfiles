@@ -1,7 +1,12 @@
-# Aurboda workstation heartbeat
+# Aurboda cron jobs
 # Install with: crontab -l | cat - ~/.config/cron/aurboda.crontab | crontab -
 # Or manually add to crontab -e
 #
 # Requires: ~/.config/aurboda/config with AURBODA_BASE_URL and AURBODA_TOKEN
 
+# Workstation heartbeat (active/display state) — every minute
 * * * * * /home/fiddur/.local/bin/workstation-tag.sh
+
+# ActivityWatch → Aurboda push — every 5 minutes
+# Requires ActivityWatch to be running locally (http://localhost:5600)
+*/5 * * * * /home/fiddur/.local/bin/aw-to-aurboda.sh >> ~/.local/state/aw-aurboda/push.log 2>&1
