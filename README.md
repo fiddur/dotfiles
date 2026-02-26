@@ -44,6 +44,31 @@ Add this line near the end of your local `~/.bashrc` (before any machine-specifi
 
 Then remove any duplicate settings from `.bashrc` that are now in `.bashrc.common` (NVM, pnpm, NODE_OPTIONS, etc.).
 
+## Aurboda
+
+The dotfiles include scripts and cron jobs for pushing data to [Aurboda](https://aurboda.net).
+
+### Config
+
+Create `~/.config/aurboda/config`:
+
+```bash
+AURBODA_BASE_URL=https://aurboda.net
+AURBODA_TOKEN=your-token-here
+```
+
+Get your token from Aurboda → Settings → Data Sources.
+
+### Install cron jobs
+
+```bash
+crontab -l | cat - ~/.config/cron/aurboda.crontab | crontab -
+```
+
+This installs:
+- **Workstation heartbeat** — reports active/display state every minute
+- **ActivityWatch push** — pushes window activity to Aurboda every 5 minutes (requires [ActivityWatch](https://activitywatch.net/) to be installed and running)
+
 ## Daily usage
 
 The `dot` alias works like regular git:
