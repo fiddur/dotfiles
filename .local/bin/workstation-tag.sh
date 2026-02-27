@@ -15,6 +15,33 @@ if [[ ! -f "$CONFIG_FILE" ]]; then
 fi
 source "$CONFIG_FILE"
 
+# Discover XAUTHORITY from a running Xwayland or Xorg process
+# Cron does not inherit XAUTHORITY from the user session, so we find it
+# from the process arguments of the X server itself.
+find_xauthority() {
+  # Look for Xwayland or Xorg process owned by this user and extract -auth argument
+  local auth
+  auth=$(ps -u "$(id -u)" -o args= 2>/dev/null \
+    | grep -E '^\s*(Xwayland|[^ ]*/Xorg|[^ ]*/X) ' \
+    | grep -o '\-auth [^ ]*' \
+    | head -1 \
+    | awk '{print $2}')
+  if [[ -n "$auth" && -f "$auth" ]]; then
+    echo "$auth"
+    return 0
+  fi
+  # Fallback: any xauth file in the user runtime dir
+  local runtime_auth
+  runtime_auth=$(ls "${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"/xauth_* 2>/dev/null | head -1)
+  if [[ -n "$runtime_auth" ]]; then
+    echo "$runtime_auth"
+    return 0
+  fi
+  # Classic fallback
+  [[ -f "$HOME/.Xauthority" ]] && echo "$HOME/.Xauthority" && return 0
+  return 1
+}
+
 # Find active X display session
 find_display() {
   # Try common display values
@@ -63,6 +90,13 @@ has_external_monitor() {
 }
 
 # Main
+
+# Set XAUTHORITY if not already set (needed when running from cron)
+if [[ -z "${XAUTHORITY:-}" ]]; then
+  XAUTHORITY=$(find_xauthority) || true
+  export XAUTHORITY
+fi
+
 DISPLAY=$(find_display) || exit 0  # No display session, skip
 
 # Only proceed if monitor is actually on
