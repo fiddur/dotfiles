@@ -1,6 +1,6 @@
 #!/bin/bash
-# Workstation heartbeat tag for Aurboda
-# Sends periodic tags indicating computer usage and display type
+# Workstation heartbeat activity for Aurboda
+# Sends periodic activities indicating computer usage and display type
 # Run via cron every minute
 
 set -euo pipefail
@@ -108,12 +108,12 @@ else
   display_type="laptop-only"
 fi
 
-tag="computer:${DEVICE}:${display_type}"
 timestamp=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+device_lower=$(echo "$DEVICE" | tr '[:upper:]' '[:lower:]')
 
-# Send tag to Aurboda API
-curl -sf -X POST "${AURBODA_BASE_URL}/api/tags" \
+# Send activity to Aurboda API (merge_span extends existing activity if within window)
+curl -sf -X POST "${AURBODA_BASE_URL}/api/activities" \
   -H "Authorization: Bearer ${AURBODA_TOKEN}" \
   -H "Content-Type: application/json" \
-  -d "{\"tag\": \"${tag}\", \"start_time\": \"${timestamp}\", \"merge_span\": ${MERGE_SPAN}}" \
-  >/dev/null 2>&1 || true  # Don't fail on API errors
+  -d "{\"activity_type\": \"computer_active\", \"start_time\": \"${timestamp}\", \"merge_span\": ${MERGE_SPAN}, \"data\": {\"device\": \"${device_lower}\", \"display\": \"${display_type}\"}}"
+
