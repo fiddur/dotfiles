@@ -17,11 +17,6 @@
       "url": "https://mcp.sentry.dev/mcp",
       "enabled": true
     },
-    "nc-mcp": {
-      "type": "local",
-      "command": ["node", "/home/fiddur/nc/NCShared/dist/bin/nc-mcp.js"],
-      "enabled": true
-    },
     "mixpanel": {
       "type": "remote",
       "url": "https://mcp.mixpanel.com/mcp",
