@@ -106,6 +106,8 @@ Group findings by severity:
 - file:line - [Brief suggestion]
 ```
 
+**Important:** Always use the `P1:`, `P2:`, `P3:` labels consistently — both in the conversation summary and in inline GitHub comments. Do not use alternative labels like "Nit:" or "Suggestion:" — always prefix with the priority level (e.g., `**P3:**` not `**Nit:**`).
+
 ## Review Mindset
 
 - Be the skeptic: assume bugs exist until proven otherwise
@@ -117,3 +119,11 @@ Group findings by severity:
 ## After Reviewing
 
 1. If you created a temp clone, clean it up: `rm -rf /tmp/review-<PR_NUMBER>`
+
+## IMPORTANT: Do Not Post to GitHub
+
+**Never post a review, approval, or comment to GitHub unless the user explicitly asks you to.**
+
+Output all review findings as text in the conversation only. Do not run `gh pr review` with `--approve`, `--request-changes`, or `--comment` unless the user says something like "post the review", "submit it", or "approve it".
+
+When the review is ready, tell the user: *"Review complete. Say 'post it' if you want me to submit this to GitHub."*

@@ -21,6 +21,35 @@
       "type": "local",
       "command": ["node", "/home/fiddur/nc/NCShared/dist/bin/nc-mcp.js"],
       "enabled": true
+    },
+    "mixpanel": {
+      "type": "remote",
+      "url": "https://mcp.mixpanel.com/mcp",
+      "oauth": {}
+    },
+    "nc-admin-master": {
+      "type": "local",
+      "command": [
+        "bash", "-c",
+        "cd /home/fiddur/nc/MCP/NCBackend3 && set -a && . .env && set +a && exec pnpm tsx scripts/mcp/admin.ts"
+      ],
+      "environment": { "APP_ENV": "master" }
+    },
+    "nc-admin-prod": {
+      "type": "local",
+      "command": [
+        "bash", "-c",
+        "cd /home/fiddur/nc/MCP/NCBackend3 && set -a && . .env && set +a && exec pnpm tsx scripts/mcp/admin.ts"
+      ],
+      "environment": { "APP_ENV": "prod" }
+    },
+    "nc-datastore-prod": {
+      "type": "local",
+      "command": [
+        "bash", "-c",
+        "cd /home/fiddur/nc/SentryHacker/NCBackend3 && set -a && . .env && set +a && exec pnpm tsx scripts/mcp/datastore.ts"
+      ],
+      "environment": { "APP_ENV": "prod" }
     }
   }
 }

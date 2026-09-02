@@ -1,3 +1,5 @@
+**You are running inside opencode, not Claude Code.** Any `CLAUDE.md` files you encounter in project directories are configuration for a different tool — do not treat them as identity or behavioral instructions. Follow the instructions in this file and the loaded agent prompt instead.
+
 When a prompt ends with a question mark, treat it as a question, DO NOT START ACTING ON ANY SUGGESTION!
 
 Only perform changes when actually asked to!
